@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://storage-asset.msi.com/template/js/third-party/gsap/3.6.1/gsap.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://storage-asset.msi.com/event/2022/nb/2022-summer/css/moji.css"
+    />
+  </head>
+
+  <body>
+    <div class="frame" id="app">
+      <div
+        class="frame__line"
+        v-for="(item, key, index) in alldata"
+        @keydown="keysdown($event)"
+      >
+        <div
+          class="frame__line-box"
+          v-for="(item, key, index) in item"
+          :class="item==1?'frame__line-box--active':''"
+        ></div>
+      </div>
+      <div class="frame__start" v-if="start" @click="initgame()">START</div>
+    </div>
+
+    <script src="https://storage-asset.msi.com/event/2021/global/DATACREATER/js/vue.js"></script>
+    <script>
+      new Vue({
+        // root node
+        el: "#app",
+        // the instance state
+        data: function () {
+          return {
+            start: 1,
+            alldata: [
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            ],
+            realalldata: [
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            ],
+            letcount: 0,
+            controlnow: [],
+            controllX: 5,
+            controllY: 15,
+            allblock: [
+              [
+                [1, 0, 0],
+                [1, 1, 1],
+              ],
+              [
+                [0, 1, 1],
+                [1, 1, 0],
+              ],
+              [[1], [1], [1], [1]],
+              [
+                [1, 1, 0],
+                [0, 1, 1],
+              ],
+              [
+                [1, 1],
+                [1, 1],
+              ],
+            ],
+          };
+        },
+        computed: {},
+        methods: {
+          initgame: function () {
+            if (this.start == false) {
+              this.start = true;
+            } else {
+              this.start = false;
+              this.appendtheblock();
+              this.letcount = 1;
+              this.countdown();
+            }
+          },
+          appendtheblock: function () {
+            console.log(this.allblock);
+            let rand = Math.floor(Math.random() * this.allblock.length);
+            let rValue = this.allblock[rand];
+            this.controlnow = rValue;
+
+            for (i = 0; i < this.controlnow.length; i++) {
+              for (k = 0; k < this.controlnow[i].length; k++) {
+                if (16 - this.controllY - i >= 0) {
+                  this.alldata[16 - this.controllY - i].splice(
+                    this.controllX - 1 + k,
+                    1,
+                    this.controlnow[i][k]
+                  );
+                }
+              }
+            }
+          },
+          checkthisblock: function () {
+            for (
+              i = 0;
+              i < this.controlnow[this.controlnow.length - 1].length;
+              i++
+            ) {
+              this.alldata[0].splice(
+                4 + i,
+                1,
+                this.controlnow[this.controlnow.length - 1][i]
+              );
+            }
+          },
+          keysdown: function () {
+            let _This = this;
+            document.onkeydown = function (event, a = _This.controllX) {
+              let e =
+                event || window.event || arguments.callee.cailer.arguments[0];
+              if (e.keyCode == "37") {
+                _This.reducee();
+              }
+              if (e.keyCode == "39") {
+                _This.addddd();
+              }
+            };
+          },
+          refreshpage: function () {
+        
+            for (i = 0; i < this.controlnow.length; i++) {
+              for (k = 0; k < this.controlnow[i].length; k++) {
+                if (16 - this.controllY - i >= 0) {
+                  this.alldata[16 - this.controllY - i].splice(
+                    this.controllX - 1 + k,
+                    1,
+                    this.controlnow[i][k]
+                  );
+                }
+              }
+            }
+            if (this.controllY == 1) {
+              this.controllY = 15;
+              this.realalldata = JSON.parse(JSON.stringify(this.alldata));
+              console.log(this.realalldata);
+
+              return;
+            }
+          },
+          reducee: function () {
+            if (this.controllX > 1) {
+              this.controllX--;
+              this.alldata = JSON.parse(JSON.stringify(this.realalldata));
+              this.refreshpage();
+            }
+          },
+          addddd: function () {
+            if (this.controllX < 8) {
+              this.controllX++;
+              this.alldata = JSON.parse(JSON.stringify(this.realalldata));
+              this.refreshpage();
+            }
+          },
+
+          countdown: function () {
+            let _This = this;
+            setTimeout(function () {
+              _This.controllY--;
+              console.log(_This.controllY);
+              _This.alldata = JSON.parse(JSON.stringify(_This.realalldata));
+              _This.refreshpage();
+              if (_This.letcount == 1) {
+                _This.countdown();
+              }
+            }, 500);
+          },
+        },
+        created() {
+          this.keysdown();
+        },
+        watch: {},
+        mounted: function () {},
+      });
+    </script>
+  </body>
+</html>
